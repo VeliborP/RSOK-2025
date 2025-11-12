@@ -1,0 +1,12 @@
+﻿@using WebShop.MVC.Models.Product
+
+@model List<ProductViewModel>
+
+<div>
+	@foreach(var item in Model)
+	{
+		<div class="single-product">
+			<p>@item.Id - @item.Code - @item.Name</p>
+		</div>
+	}
+</div>
