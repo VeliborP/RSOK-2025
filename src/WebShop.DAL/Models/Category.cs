@@ -11,6 +11,5 @@ namespace WebShop.DAL.Models
         public required string Name { get; set; }
         [StringLength(1500)]
         public string? Description { get; set; }
-        public int? ParentCategoryId { get; set; }
     }
 }
