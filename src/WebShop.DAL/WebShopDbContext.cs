@@ -1,0 +1,25 @@
+﻿using Microsoft.EntityFrameworkCore;
+using WebShop.DAL.Models;
+
+namespace WebShop.DAL
+{
+    public class WebShopDbContext : DbContext
+    {
+        public WebShopDbContext() : base()
+        {
+            
+        }
+
+        public WebShopDbContext(DbContextOptions<WebShopDbContext> options)
+            : base(options)
+        {
+        }
+
+        public DbSet<Category> Categories { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
+    }
+}
