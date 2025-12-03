@@ -1,4 +1,4 @@
-﻿@model WebShop.DAL.Models.Product
+﻿@model WebShop.MVC.ViewModels.ProductViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -29,7 +29,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" class ="form-control" asp-items="ViewBag.CategoryId"></select>
+                <select asp-for="CategoryId" class ="form-control" asp-items="Model.Categories"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

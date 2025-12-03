@@ -13,7 +13,6 @@ namespace WebShop.MVC.Controllers
             _service = categoryService;
         }
 
-        // GET: /Category
         public async Task<IActionResult> Index()
         {
             var categories = await _service.GetAllAsync();
@@ -21,7 +20,6 @@ namespace WebShop.MVC.Controllers
             return View(vm);
         }
 
-        // GET: /Category/Details/5
         public async Task<IActionResult> Details(int id)
         {
             var category = await _service.GetByIdAsync(id);
@@ -30,10 +28,8 @@ namespace WebShop.MVC.Controllers
             return View(CategoryViewModel.FromEntity(category));
         }
 
-        // GET: /Category/Create
         public IActionResult Create() => View();
 
-        // POST: /Category/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CategoryViewModel vm)
@@ -44,7 +40,6 @@ namespace WebShop.MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: /Category/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
             var category = await _service.GetByIdAsync(id);
@@ -53,7 +48,6 @@ namespace WebShop.MVC.Controllers
             return View(CategoryViewModel.FromEntity(category));
         }
 
-        // POST: /Category/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, CategoryViewModel vm)
@@ -65,7 +59,6 @@ namespace WebShop.MVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: /Category/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
             var category = await _service.GetByIdAsync(id);
@@ -74,7 +67,6 @@ namespace WebShop.MVC.Controllers
             return View(CategoryViewModel.FromEntity(category));
         }
 
-        // POST: /Category/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

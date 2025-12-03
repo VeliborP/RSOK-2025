@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using Humanizer;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WebShop.DAL.Models;
 
@@ -19,19 +22,54 @@ namespace WebShop.MVC.ViewModels
         [Required(ErrorMessage = "Name is required")]
         public required string Name { get; set; }
         public string? Description { get; set; }
+        [DisplayName("Category name")]
         public string? CategoryName { get; set; }
 
         public int? CategoryId { get; set; }
         public List<SelectListItem> Categories { get; set; }
 
-        internal static string? FromEntity(Product product)
+        internal static ProductViewModel FromEntity(Product product)
         {
-            throw new NotImplementedException();
+            return new ProductViewModel
+            {
+                Id = product.Id,
+                Code = product.Code,
+                Name = product.Name,
+                Description = product.Description == null ? "Empty description" : product.Description,
+                CategoryName = product.Category == null ? "No category" : product.Category.Name,
+                CategoryId = product.CategoryId
+            };
+        }
+
+        internal static ProductViewModel FromEntity(Product product, List<Category> categories = null)
+        {
+            return new ProductViewModel
+            {
+                Id = product.Id,
+                Code = product.Code,
+                Name = product.Name,
+                Description = product.Description,
+                CategoryName = product.Category == null ? "---" : product.Category.Name,
+                CategoryId = product.CategoryId,
+                Categories = categories.Select(model => new SelectListItem
+                {
+                    Value = model.Id.ToString(),
+                    Text = model.Code + "-" + model.Name,
+                    Selected = model.Id == product.CategoryId
+                }).ToList()
+            };
         }
 
         internal Product ToEntity()
         {
-            throw new NotImplementedException();
+            return new Product
+            {
+                Id = this.Id,
+                Code = this.Code.Trim(),
+                Name = this.Name.Trim(),
+                Description = this.Description?.Trim(),
+                CategoryId = this.CategoryId
+            };
         }
     }
 }

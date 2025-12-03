@@ -1,66 +1,65 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
 using WebShop.BLL.Interfaces;
 using WebShop.MVC.ViewModels;
-//using WebShop.DAL;
-//using WebShop.DAL.Models;
 
 namespace WebShop.MVC.Controllers
 {
     public class ProductController : Controller
     {
-        private readonly IProductService _service;
+        private readonly IProductService _productService;
+        private readonly ICategoryService _categoryService;
 
-        public ProductController(IProductService service)
+        public ProductController(IProductService service, ICategoryService categoryService)
         {
-            _service = service;
+            _productService = service;
+            _categoryService = categoryService;
         }
 
-        // GET: Product
         public async Task<IActionResult> Index()
         {
-            var products = await _service.GetAllAsync();
+            var products = await _productService.GetAllAsync();
             var vm = products.Select(ProductViewModel.FromEntity).ToList();
             return View(vm);
         }
 
-        // GET: Product/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            var product = await _service.GetByIdAsync(id);
+            var product = await _productService.GetByIdAsync(id);
             if (product == null) return NotFound();
 
             return View(ProductViewModel.FromEntity(product));
         }
 
-        // GET: Product/Create
-        public IActionResult Create() => View();
+        public async Task<IActionResult> Create() 
+        {
+            var categories = await _categoryService.GetAllAsync();
 
-        // POST: Product/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+            var productViewModel = ProductViewModel.FromEntity(new DAL.Models.Product() { Code = "", Name ="" }, categories);
+
+            return View(productViewModel);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductViewModel vm)
         {
             if (!ModelState.IsValid) return View(vm);
 
-            await _service.CreateAsync(vm.ToEntity());
+            await _productService.CreateAsync(vm.ToEntity());
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Product/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            var product = await _service.GetByIdAsync(id);
+            var product = await _productService.GetByIdAsync(id);
             if (product == null) return NotFound();
 
-            return View(ProductViewModel.FromEntity(product));
+            var categories = await _categoryService.GetAllAsync();
+            var productViewModel = ProductViewModel.FromEntity(product, categories);
+
+            return View(productViewModel);
         }
 
-        // POST: Product/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ProductViewModel vm)
@@ -68,25 +67,23 @@ namespace WebShop.MVC.Controllers
             if (id != vm.Id) return BadRequest();
             if (!ModelState.IsValid) return View(vm);
 
-            await _service.UpdateAsync(vm.ToEntity());
+            await _productService.UpdateAsync(vm.ToEntity());
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Product/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            var product = await _service.GetByIdAsync(id);
+            var product = await _productService.GetByIdAsync(id);
             if (product == null) return NotFound();
 
             return View(ProductViewModel.FromEntity(product));
         }
 
-        // POST: Product/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _service.DeleteAsync(id);
+            await _productService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }
