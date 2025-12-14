@@ -8,6 +8,7 @@ namespace WebShop.BLL.Services
     public class CategoryService : ICategoryService
     {
         private readonly WebShopDbContext _context;
+
         public CategoryService(WebShopDbContext context)
         {
             _context = context;

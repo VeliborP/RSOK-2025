@@ -1,28 +1,30 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebShop.BLL.Interfaces;
 using WebShop.MVC.ViewModels;
 
 namespace WebShop.MVC.Controllers
 {
+    [Authorize(Roles="Admin")]
     public class CategoryController : Controller
     {
-        private readonly ICategoryService _service;
+        private readonly ICategoryService _categoryService;
 
-        public CategoryController(ICategoryService categoryService)
+        public CategoryController(ICategoryService service)
         {
-            _service = categoryService;
+            _categoryService = service;
         }
 
         public async Task<IActionResult> Index()
         {
-            var categories = await _service.GetAllAsync();
+            var categories = await _categoryService.GetAllAsync();
             var vm = categories.Select(CategoryViewModel.FromEntity).ToList();
             return View(vm);
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var category = await _service.GetByIdAsync(id);
+            var category = await _categoryService.GetByIdAsync(id);
             if (category == null) return NotFound();
 
             return View(CategoryViewModel.FromEntity(category));
@@ -36,13 +38,13 @@ namespace WebShop.MVC.Controllers
         {
             if (!ModelState.IsValid) return View(vm);
 
-            await _service.CreateAsync(vm.ToEntity());
+            await _categoryService.CreateAsync(vm.ToEntity());
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            var category = await _service.GetByIdAsync(id);
+            var category = await _categoryService.GetByIdAsync(id);
             if (category == null) return NotFound();
 
             return View(CategoryViewModel.FromEntity(category));
@@ -55,13 +57,13 @@ namespace WebShop.MVC.Controllers
             if (id != vm.Id) return BadRequest();
             if (!ModelState.IsValid) return View(vm);
 
-            await _service.UpdateAsync(vm.ToEntity());
+            await _categoryService.UpdateAsync(vm.ToEntity());
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            var category = await _service.GetByIdAsync(id);
+            var category = await _categoryService.GetByIdAsync(id);
             if (category == null) return NotFound();
 
             return View(CategoryViewModel.FromEntity(category));
@@ -71,7 +73,7 @@ namespace WebShop.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _service.DeleteAsync(id);
+            await _categoryService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

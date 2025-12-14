@@ -20,7 +20,7 @@ namespace WebShop.BLL.Services
 
         public async Task<Product?> GetByIdAsync(int? id)
         {
-            return await _context.Products.Include(c => c.Category).FirstOrDefaultAsync(p => p.Id == id);
+            return await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<Product> CreateAsync(Product product)
@@ -46,6 +46,13 @@ namespace WebShop.BLL.Services
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<List<Category>> GetCategoriesWithProductsAsync()
+        {
+            return await _context.Categories
+            .Include(c => c.Products)
+            .ToListAsync();
         }
     }
 }

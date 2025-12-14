@@ -3,13 +3,16 @@
 @{
     ViewData["Title"] = "Index";
 }
+<style>
+    
+</style>
 
-<h1>Index</h1>
+<h1>Categories</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<table id="categoriesTable" class="table">
     <thead>
         <tr>
             <th>
@@ -45,3 +48,18 @@
 }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        $('#categoriesTable').DataTable({
+            "paging": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "lengthChange": true,
+            "language": {
+                "search": "Filter records:"
+            }
+        });
+    </script>
+}

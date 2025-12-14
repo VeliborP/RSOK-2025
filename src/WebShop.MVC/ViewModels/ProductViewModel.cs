@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Humanizer;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WebShop.DAL.Models;
 
@@ -20,12 +18,26 @@ namespace WebShop.MVC.ViewModels
         public required string Code { get; set; }
 
         [Required(ErrorMessage = "Name is required")]
+        
         public required string Name { get; set; }
+        
         public string? Description { get; set; }
+
+        [Required(ErrorMessage = "Price is required")]
+        [Range(0.01, 1000000, ErrorMessage = "Price must be between 0.01 and 1,000,000")]
+        public decimal Price { get; set; }
+
         [DisplayName("Category name")]
         public string? CategoryName { get; set; }
-
         public int? CategoryId { get; set; }
+
+        //upload slike proizvoda
+        [DisplayName("Product image")]
+        public IFormFile? ImageFile { get; set; }
+        [DisplayName("Product image")]
+        public string? ImagePath { get; set; }
+        public bool DeleteImage { get; set; }
+
         public List<SelectListItem> Categories { get; set; }
 
         internal static ProductViewModel FromEntity(Product product)
@@ -36,8 +48,10 @@ namespace WebShop.MVC.ViewModels
                 Code = product.Code,
                 Name = product.Name,
                 Description = product.Description == null ? "Empty description" : product.Description,
+                Price = product.Price,
                 CategoryName = product.Category == null ? "No category" : product.Category.Name,
-                CategoryId = product.CategoryId
+                CategoryId = product.CategoryId,
+                ImagePath = product.ImagePath
             };
         }
 
@@ -49,8 +63,10 @@ namespace WebShop.MVC.ViewModels
                 Code = product.Code,
                 Name = product.Name,
                 Description = product.Description,
+                Price = product.Price,
                 CategoryName = product.Category == null ? "---" : product.Category.Name,
                 CategoryId = product.CategoryId,
+                ImagePath = product.ImagePath,
                 Categories = categories.Select(model => new SelectListItem
                 {
                     Value = model.Id.ToString(),
@@ -60,7 +76,7 @@ namespace WebShop.MVC.ViewModels
             };
         }
 
-        internal Product ToEntity()
+        internal Product ToEntity(string? imagePath = null, bool deleteImage = false)
         {
             return new Product
             {
@@ -68,7 +84,9 @@ namespace WebShop.MVC.ViewModels
                 Code = this.Code.Trim(),
                 Name = this.Name.Trim(),
                 Description = this.Description?.Trim(),
-                CategoryId = this.CategoryId
+                Price = this.Price,
+                CategoryId = this.CategoryId,
+                ImagePath = deleteImage ? null : (imagePath ?? this.ImagePath)
             };
         }
     }
